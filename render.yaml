@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: game-reviews-platform
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    pythonVersion: 3.11.9
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: game-reviews-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: false
