@@ -7,10 +7,16 @@ import uvicorn
 
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import List, Optional
 import uvicorn
+
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
+from fastapi import Request
+
+app.mount("/static", StaticFiles(directory="../static"), name="static")
+templates = Jinja2Templates(directory="../templates")
 
 app = FastAPI(title="GameReviews Platform API")
 
@@ -38,10 +44,10 @@ demo_games = [
 ]
 
 # API endpoints
-@app.get("/")
-async def read_root():
-    return {"message": "GameReviews Platform API работает!"}
-
+@app.get("/", response_class=HTMLResponse)
+async def read_root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+    
 @app.get("/api/games", response_model=List[Game])
 async def get_games():
     return demo_games
