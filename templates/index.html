@@ -51,5 +51,92 @@
         <button type="submit">Создать</button>
     </form>
 </div>
+    <script>
+    // Добавьте этот код в существующий <script> блок
+    // или создайте новый <script> блок перед </body>
+    
+    document.getElementById('gameForm').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Отменяем стандартную отправку формы
+        
+        const form = event.target;
+        const messageDiv = document.getElementById('formMessage');
+        
+        // Собираем данные из формы
+        const gameData = {
+            title: document.getElementById('gameTitle').value,
+            genre: document.getElementById('gameGenre').value,
+            release_year: document.getElementById('gameYear').value ? 
+                         parseInt(document.getElementById('gameYear').value) : null,
+            developer: document.getElementById('gameDeveloper').value,
+            description: document.getElementById('gameDescription').value
+        };
+        
+        // Показываем загрузку
+        const submitButton = form.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+        submitButton.textContent = '⏳ Отправка...';
+        submitButton.disabled = true;
+        
+        try {
+            // Отправляем данные на API
+            const response = await fetch('/api/games', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(gameData)
+            });
+            
+            if (response.ok) {
+                // Успешно!
+                const result = await response.json();
+                
+                // Показываем успешное сообщение
+                messageDiv.textContent = `✅ Игра "${result.title}" успешно добавлена!`;
+                messageDiv.className = 'success-message';
+                messageDiv.style.display = 'block';
+                
+                // Очищаем форму
+                form.reset();
+                
+                // Автоматически скрываем сообщение через 5 секунд
+                setTimeout(() => {
+                    messageDiv.style.display = 'none';
+                }, 5000);
+                
+                // Можно обновить список игр (если он есть на странице)
+                console.log('Игра добавлена:', result);
+                
+            } else {
+                // Ошибка от сервера
+                const error = await response.json();
+                throw new Error(error.detail || 'Ошибка при добавлении игры');
+            }
+            
+        } catch (error) {
+            // Показываем сообщение об ошибке
+            messageDiv.textContent = `❌ Ошибка: ${error.message}`;
+            messageDiv.className = 'error-message';
+            messageDiv.style.display = 'block';
+            
+            console.error('Ошибка:', error);
+            
+        } finally {
+            // Восстанавливаем кнопку
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
+        }
+    });
+    
+    // Дополнительно: Валидация года выпуска
+    document.getElementById('gameYear').addEventListener('input', function() {
+        const year = parseInt(this.value);
+        if (year < 1970 || year > 2024) {
+            this.style.borderColor = '#e53e3e';
+        } else {
+            this.style.borderColor = '';
+        }
+    });
+</script>
 </body>
 </html>
