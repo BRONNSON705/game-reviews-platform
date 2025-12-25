@@ -1,4 +1,6 @@
-from pydantic import BaseModel, EmailStr, Field
+# Вместо from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr
+from pydantic import Field  # Для версии 1.x отдельно
 from datetime import datetime
 from typing import Optional, List
 
