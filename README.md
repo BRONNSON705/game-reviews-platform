@@ -1,4 +1,4 @@
-Проект FastAPI - платформа для обзоров игр
+Проект FastAPI - платформа для обзоров игр, созданная прекрасным человеком Antiks(https://github.com/kseniyafeo2000-maker)
 
 # GameReviews Platform
 
